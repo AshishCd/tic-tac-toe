@@ -1,95 +1,85 @@
-import Image from "next/image";
+"use client";
+
+import { useState } from "react";
 import styles from "./page.module.css";
 
 export default function Home() {
+  const [currentPlayer, setCurrentPlayer] = useState("X");
+  const [board, setBoard] = useState(Array(9).fill(null));
+
+  const cells_in_lines = [
+    [0, 1, 2],
+    [3, 4, 5],
+    [6, 7, 8],
+    [0, 3, 6],
+    [1, 4, 7],
+    [2, 6, 8],
+    [0, 4, 8],
+    [2, 4, 6],
+  ];
+
+  const determineWinner = (board) => {
+    for (let i = 0; i < cells_in_lines.length; i++) {
+      const [x, y, z] = cells_in_lines[i];
+      if (board[x] !== null && board[x] === board[y] && board[y] === board[z]) {
+        //if all the values are match then the player is win
+        return board[x];
+      }
+    }
+    return null;
+  };
+
+  const Cell = ({ mark, disabled, onClick, styleProps }) => {
+    return (
+      <button className={styleProps} onClick={onClick} disabled={disabled}>
+        {mark}
+      </button>
+    );
+  };
+  const winner = determineWinner(board);
+  const getStatus = () => {
+    if (winner !== null) {
+      return `Player ${winner} wins`;
+    };
+    if(!board.includes(null)){
+      return "It's a draw";
+    }
+
+    return `Player ${currentPlayer} turns`;
+  };
   return (
-    <main className={styles.main}>
-      <div className={styles.description}>
-        <p>
-          Get started by editing&nbsp;
-          <code className={styles.code}>app/page.js</code>
-        </p>
-        <div>
-          <a
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{" "}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className={styles.vercelLogo}
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
-        </div>
+    <div className={styles.App}>
+      <h3>Tic Tac Toe</h3>
+      <p>{getStatus()}</p>
+      <div className={styles.board}>
+        {Array(9)
+          .fill(null)
+          .map((_, index) => index) //it wil output [0,1,2,3,4,5,6,7,8]
+          .map((cellIndex) => {
+            return (
+              <Cell
+                key={cellIndex}
+                onClick={() => {
+                  const newBoard = [...board];
+                  newBoard[cellIndex] = currentPlayer;
+                  setBoard(newBoard);
+                  setCurrentPlayer(currentPlayer === "X" ? "0" : "X");
+                }}
+                mark={board[cellIndex]}
+                disabled={board[cellIndex] || winner}
+                styleProps={styles.innerCell}
+              />
+            );
+          })}
       </div>
-
-      <div className={styles.center}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
-
-      <div className={styles.grid}>
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Docs <span>-&gt;</span>
-          </h2>
-          <p>Find in-depth information about Next.js features and API.</p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Learn <span>-&gt;</span>
-          </h2>
-          <p>Learn about Next.js in an interactive course with&nbsp;quizzes!</p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Templates <span>-&gt;</span>
-          </h2>
-          <p>Explore starter templates for Next.js.</p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Deploy <span>-&gt;</span>
-          </h2>
-          <p>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
+      <button
+        onClick={() => {
+          setBoard(Array(9).fill(null));
+          setCurrentPlayer("X");
+        }}
+      >
+        {"Reset"}
+      </button>
+    </div>
   );
 }
