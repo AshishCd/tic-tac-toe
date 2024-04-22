@@ -1,3 +1,6 @@
+![image](https://github.com/AshishCd/tic-tac-toe/assets/39944703/7457a70d-9a2e-4390-91f9-18779c9b6fa3)
+
+
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
 ## Getting Started
